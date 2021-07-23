@@ -316,18 +316,18 @@ constexpr ObisId water_delivered::id;
 constexpr char water_delivered::name_progmem[];
 constexpr const __FlashStringHelper *water_delivered::name;
 
-constexpr ObisId slave_device_type::id;
-constexpr char slave_device_type::name_progmem[];
-constexpr const __FlashStringHelper *slave_device_type::name;
+constexpr ObisId sub_device_type::id;
+constexpr char sub_device_type::name_progmem[];
+constexpr const __FlashStringHelper *sub_device_type::name;
 
-constexpr ObisId slave_equipment_id::id;
-constexpr char slave_equipment_id::name_progmem[];
-constexpr const __FlashStringHelper *slave_equipment_id::name;
+constexpr ObisId sub_equipment_id::id;
+constexpr char sub_equipment_id::name_progmem[];
+constexpr const __FlashStringHelper *sub_equipment_id::name;
 
-constexpr ObisId slave_valve_position::id;
-constexpr char slave_valve_position::name_progmem[];
-constexpr const __FlashStringHelper *slave_valve_position::name;
+constexpr ObisId sub_valve_position::id;
+constexpr char sub_valve_position::name_progmem[];
+constexpr const __FlashStringHelper *sub_valve_position::name;
 
-constexpr ObisId slave_delivered::id;
-constexpr char slave_delivered::name_progmem[];
-constexpr const __FlashStringHelper *slave_delivered::name;
+constexpr ObisId sub_delivered::id;
+constexpr char sub_delivered::name_progmem[];
+constexpr const __FlashStringHelper *sub_delivered::name;

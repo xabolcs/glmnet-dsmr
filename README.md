@@ -1,5 +1,5 @@
-Arduino Dutch Smart meter (DSMR) parser
-=======================================
+# Arduino Dutch Smart meter (DSMR) parser
+
 This is an Arduino library for interfacing with Dutch smart meters, through
 their P1 port. This library can take care of controlling the "request" pin,
 reading messages and parsing them.
@@ -11,8 +11,8 @@ should be possible to adapt for use outside of the Arduino environment.
 When using Arduino, version 1.6.6 or above is required because this
 library needs C++11 support which was enabled in that version.
 
-Protocol
---------
+## Protocol
+
 Every smart meter in the Netherlands has to comply with the Dutch Smart
 Meter Requirements (DSMR). At the time of writing, DSMR 4.x is the
 current version. The DSMR 5.0 P1 specification is available and expected to
@@ -59,11 +59,11 @@ used.
 
 A typical P1 message looks something like this:
 
-	/KFM5KAIFA-METER
+    /KFM5KAIFA-METER
 
-	1-0:1.8.1(000671.578*kWh)
-	1-0:1.7.0(00.318*kW)
-	!1E1D
+    1-0:1.8.1(000671.578*kWh)
+    1-0:1.7.0(00.318*kW)
+    !1E1D
 
 This includes an identification header at the top, a checksum at the
 bottom, and one or more lines of data in the middle. This example is
@@ -72,25 +72,25 @@ really stripped down, real messages will have more data in them.
 The first part of the line (e.g. `1-0:1.8.1`) is the (OBIS) id of the
 field, which defines the meaning and format of the rest of the line.
 
-Parsing a message
------------------
+## Parsing a message
+
 Unlike other solutions floating around (which typically do some pattern
 matching to extract the data they need), this code properly parses
 messages, verifying the checksum and really parses each line according
 to the specifications. This should make for more reliable parsing, and
 allows for useful parser error messages:
 
-	1-0:1.8.1(000671.578*XWh)
-	                     ^
-	Error: Invalid unit
+    1-0:1.8.1(000671.578*XWh)
+                         ^
+    Error: Invalid unit
 
-	1-0:1.8.1(0006#71.578*kWh)
-	              ^
-	Error: Invalid number
+    1-0:1.8.1(0006#71.578*kWh)
+                  ^
+    Error: Invalid number
 
-	!6F4A
-	 ^
-	Checksum mismatch
+    !6F4A
+     ^
+    Checksum mismatch
 
 This library uses C++ templates extensively. This allows defining a
 custom datatype by listing the fields you are interested in, and then
@@ -102,42 +102,42 @@ is parsed and stored into the corresponding field.
 As an example, consider we want to parse the identification and current
 power fields in the example message above. We define a datatype:
 
-	using MyData = ParsedData<
-	  /* String */ identification,
-	  /* FixedValue */ power_delivered
-	>;
+    using MyData = ParsedData<
+      /* String */ identification,
+      /* FixedValue */ power_delivered
+    >;
 
 The syntax is a bit weird because of the template magic used, but the
 above essentially defines a struct with members for each field to be
 parsed. For each field, there is also an associated `xxx_present`
 member, which can be used to check whether the field was present in the
 parsed data (if it is false, the associated field contains uninitialized
-data).  There is some extra stuff in the background, but the `MyData`
+data). There is some extra stuff in the background, but the `MyData`
 can be used just like the below struct. It also takes up the same amount
 of space.
 
-	struct MyData {
-		bool identification_present;
-		String identification;
-		bool power_delivered_present;
-		FixedValue power_delivered;
-	};
+    struct MyData {
+    	bool identification_present;
+    	String identification;
+    	bool power_delivered_present;
+    	FixedValue power_delivered;
+    };
 
 After this, call the parser. By passing our custom datatype defined
 above, the parser knows what fields to look for.
 
-	  MyData data;
-	  ParseResult<void> res = P1Parser::parse(&data, msg, lengthof(msg));
+      MyData data;
+      ParseResult<void> res = P1Parser::parse(&data, msg, lengthof(msg));
 
 Finally, we can check if the parsing was succesful and access the parsed
 values as members of `data`:
 
-	  if (!res.err && res.all_present()) {
-	    // Succesfully parsed, print results:
-	    Serial.println(data.identification);
-	    Serial.print(data.power_delivered.int_val());
-	    Serial.println("W");
-	  }
+      if (!res.err && res.all_present()) {
+        // Succesfully parsed, print results:
+        Serial.println(data.identification);
+        Serial.print(data.power_delivered.int_val());
+        Serial.println("W");
+      }
 
 In this case, we check whether parsing was successful, but also check
 that all defined fields were present in the parsed message (using the
@@ -156,8 +156,8 @@ fields, even if they are not present in the output you want to parse. It
 is recommended to limit the list of fields to just the ones that you
 need, to make the parsing and printing code smaller and faster.
 
-Parsed value types
-------------------
+## Parsed value types
+
 Some values are parsed to an Arduino `String` value or C++ integer type,
 those should be fairly straightforward. There are three special types
 that need some explanation: `FixedValue` and `TimestampedFixedValue`.
@@ -186,10 +186,10 @@ If you access the field directly, it will automatically be converted to
 version is sufficient, you can call the `int_val()` method to get the
 integer version returned.
 
-	// Print as float, in kW
-	Serial.print(data.power_delivered);
-	// Print as integer, in W
-	Serial.print(data.power_delivered.int_val());
+    // Print as float, in kW
+    Serial.print(data.power_delivered);
+    // Print as integer, in W
+    Serial.print(data.power_delivered.int_val());
 
 Additionally there is a `TimestampedFixedValue` method, which works
 identically, but additionally has a `timestamp()` method which returns
@@ -201,16 +201,17 @@ Parsing these into something like a UNIX timestamp is tricky (think
 leap years and seconds) and of limited use, so this just keeps the
 original format.
 
-Connecting the P1 port
-----------------------
+## Connecting the P1 port
+
 The P1 port essentially consists of three parts:
- - A 5V power supply (this was not present in 3.x).
- - A serial TX pin. This sends meter data using 0/5V signalling, using
-   idle low. Note that this is the voltage level commonly referred to as
-   "TTL serial", but the polarity is reversed (more like RS232). This
-   port uses 115200 bps 8N1 (3.x and before used 9600 bps).
- - A request pin - 5V needs to be applied to this pin to start
-   generating output on the TX pin.
+
+- A 5V power supply (this was not present in 3.x).
+- A serial TX pin. This sends meter data using 0/5V signalling, using
+  idle low. Note that this is the voltage level commonly referred to as
+  "TTL serial", but the polarity is reversed (more like RS232). This
+  port uses 115200 bps 8N1 (3.x and before used 9600 bps).
+- A request pin - 5V needs to be applied to this pin to start
+  generating output on the TX pin.
 
 To connect to an Arduino that has an unused hardware serial port (like
 an Arduino Mega, Leonardo or Micro), the signal has to inverted. This
@@ -222,24 +223,24 @@ inverting, in software using Arduino's SoftwareSerial library. However,
 it seems there are still occasional reception errors when using
 SoftwareSerial.
 
-Slave meters
-------------
+## Sub meters
+
 In addition to a smart electricity meter, there can be additional
-slave meters attached (e.g., gas, water, thermal and slave electricity
+sub meters attached (e.g., gas, water, thermal and sub electricity
 meter). These can talk to the main meter using the (wired or wireless)
 MBUS protocol to regularly (hourly for 4.x, every 5 minutes for 5.0)
 send over their meter readings. Based on the configuration / connection,
-each of these slaves gets an MBUS identifier (1-4).
+each of these subs gets an MBUS identifier (1-4).
 
 In the P1 message, this identifier is used as the second number in the
-OBIS identifiers for the fields for the slave. Currently, the code has
+OBIS identifiers for the fields for the sub. Currently, the code has
 the assignment from MBUS identifier to device type hardcoded in
 `fields.h`. For the most common configuration of an electricity meter with
-a single gas meter as slave, this works straight away. Other
+a single gas meter as sub, this works straight away. Other
 configurations might need changes to `fields.h` to work.
 
-License
--------
+## License
+
 All of the code and documentation in this library is licensed under the
 MIT license, with the exception of the examples, which are licensed
 under an even more liberal license.

@@ -191,7 +191,7 @@ namespace dsmr
     const uint8_t GAS_MBUS_ID = 1;
     const uint8_t WATER_MBUS_ID = 2;
     const uint8_t THERMAL_MBUS_ID = 3;
-    const uint8_t SLAVE_MBUS_ID = 4;
+    const uint8_t SUB_MBUS_ID = 4;
 
 #define DEFINE_FIELD(fieldname, value_t, obis, field_t, field_args...)                                               \
   struct fieldname : field_t<fieldname, ##field_args>                                                                \
@@ -392,17 +392,17 @@ namespace dsmr
                  units::m3, units::dm3);
 
     /* Device-Type */
-    DEFINE_FIELD(slave_device_type, uint16_t, ObisId(0, SLAVE_MBUS_ID, 24, 1, 0), IntField, units::none);
+    DEFINE_FIELD(sub_device_type, uint16_t, ObisId(0, SUB_MBUS_ID, 24, 1, 0), IntField, units::none);
 
     /* Equipment identifier (Thermal: heat or cold) */
-    DEFINE_FIELD(slave_equipment_id, String, ObisId(0, SLAVE_MBUS_ID, 96, 1, 0), StringField, 0, 96);
+    DEFINE_FIELD(sub_equipment_id, String, ObisId(0, SUB_MBUS_ID, 96, 1, 0), StringField, 0, 96);
 
     /* Valve position (on/off/released) (Note: Removed in 4.0.7 / 4.2.2 / 5.0). */
-    DEFINE_FIELD(slave_valve_position, uint8_t, ObisId(0, SLAVE_MBUS_ID, 24, 4, 0), IntField, units::none);
+    DEFINE_FIELD(sub_valve_position, uint8_t, ObisId(0, SUB_MBUS_ID, 24, 4, 0), IntField, units::none);
 
-    /* Last 5-minute Meter reading Heat or Cold and capture time (e.g. slave
+    /* Last 5-minute Meter reading Heat or Cold and capture time (e.g. sub
  * E meter) (Note: 4.x spec has "hourly meter reading") */
-    DEFINE_FIELD(slave_delivered, TimestampedFixedValue, ObisId(0, SLAVE_MBUS_ID, 24, 2, 1), TimestampedFixedField,
+    DEFINE_FIELD(sub_delivered, TimestampedFixedValue, ObisId(0, SUB_MBUS_ID, 24, 2, 1), TimestampedFixedField,
                  units::m3, units::dm3);
 
   } // namespace fields
