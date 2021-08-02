@@ -86,11 +86,6 @@ namespace dsmr
     bool all_present_inlined() { return true; }
   };
 
-  // Do not use F() for multiply-used strings (including strings used from
-  // multiple template instantiations), that would result in multiple
-  // instances of the string in the binary
-  static constexpr char DUPLICATE_FIELD[] DSMR_PROGMEM = "Duplicate field";
-
   /**
  * General case: At least one typename is passed.
  */
@@ -119,7 +114,7 @@ namespace dsmr
       if (id == T::id)
       {
         if (T::present())
-          return ParseResult<void>().fail((const __FlashStringHelper *)DUPLICATE_FIELD, str);
+          return ParseResult<void>().fail("Duplicate field", str);
         T::present() = true;
         return T::parse(str, end);
       }
@@ -150,7 +145,7 @@ namespace dsmr
     {
       ParseResult<String> res;
       if (str >= end || *str != '(')
-        return res.fail(F("Missing ("), str);
+        return res.fail("Missing (", str);
 
       const char *str_start = str + 1; // Skip (
       const char *str_end = str_start;
@@ -159,11 +154,11 @@ namespace dsmr
         ++str_end;
 
       if (str_end == end)
-        return res.fail(F("Missing )"), str_end);
+        return res.fail("Missing )", str_end);
 
       size_t len = str_end - str_start;
       if (len < min || len > max)
-        return res.fail(F("Invalid string length"), str_start);
+        return res.fail("Invalid string length", str_start);
 
       concat_hack(res.result, str_start, len);
 
@@ -174,8 +169,8 @@ namespace dsmr
   // Do not use F() for multiply-used strings (including strings used from
   // multiple template instantiations), that would result in multiple
   // instances of the string in the binary
-  static constexpr char INVALID_NUMBER[] DSMR_PROGMEM = "Invalid number";
-  static constexpr char INVALID_UNIT[] DSMR_PROGMEM = "Invalid unit";
+  static constexpr char INVALID_NUMBER[] = "Invalid number";
+  static constexpr char INVALID_UNIT[] = "Invalid unit";
 
   struct NumParser
   {
@@ -183,7 +178,7 @@ namespace dsmr
     {
       ParseResult<uint32_t> res;
       if (str >= end || *str != '(')
-        return res.fail(F("Missing ("), str);
+        return res.fail("Missing (", str);
 
       const char *num_start = str + 1; // Skip (
       const char *num_end = num_start;
@@ -194,7 +189,7 @@ namespace dsmr
       while (num_end < end && !strchr("*.)", *num_end))
       {
         if (*num_end < '0' || *num_end > '9')
-          return res.fail((const __FlashStringHelper *)INVALID_NUMBER, num_end);
+          return res.fail(INVALID_NUMBER, num_end);
         value *= 10;
         value += *num_end - '0';
         ++num_end;
@@ -208,7 +203,7 @@ namespace dsmr
         while (num_end < end && !strchr("*)", *num_end) && max_decimals--)
         {
           if (*num_end < '0' || *num_end > '9')
-            return res.fail((const __FlashStringHelper *)INVALID_NUMBER, num_end);
+            return res.fail(INVALID_NUMBER, num_end);
           value *= 10;
           value += *num_end - '0';
           ++num_end;
@@ -222,19 +217,19 @@ namespace dsmr
       if (unit && *unit)
       {
         if (num_end >= end || *num_end != '*')
-          return res.fail(F("Missing unit"), num_end);
+          return res.fail("Missing unit", num_end);
         const char *unit_start = ++num_end; // skip *
         while (num_end < end && *num_end != ')' && *unit)
         {
           if (*num_end++ != *unit++)
-            return res.fail((const __FlashStringHelper *)INVALID_UNIT, unit_start);
+            return res.fail(INVALID_UNIT, unit_start);
         }
         if (*unit)
-          return res.fail((const __FlashStringHelper *)INVALID_UNIT, unit_start);
+          return res.fail(INVALID_UNIT, unit_start);
       }
 
       if (num_end >= end || *num_end != ')')
-        return res.fail(F("Extra data"), num_end);
+        return res.fail("Extra data", num_end);
 
       return res.succeed(value).until(num_end + 1); // Skip )
     }
@@ -259,7 +254,7 @@ namespace dsmr
         {
           uint8_t digit = c - '0';
           if (id.v[part] > 25 || (id.v[part] == 25 && digit > 5))
-            return res.fail(F("Obis ID has number over 255"), res.next);
+            return res.fail("Obis ID has number over 255", res.next);
           id.v[part] = id.v[part] * 10 + digit;
         }
         else if (part == 0 && c == '-')
@@ -282,7 +277,7 @@ namespace dsmr
       }
 
       if (res.next == str)
-        return res.fail(F("OBIS id Empty"), str);
+        return res.fail("OBIS id Empty", str);
 
       for (++part; part < 6; ++part)
         id.v[part] = 255;
@@ -303,7 +298,7 @@ namespace dsmr
       // This should never happen with the code in this library, but
       // check anyway
       if (str + CRC_LEN > end)
-        return res.fail(F("No checksum found"), str);
+        return res.fail("No checksum found", str);
 
       // A bit of a messy way to parse the checksum, but all
       // integer-parse functions assume nul-termination
@@ -315,7 +310,7 @@ namespace dsmr
 
       // See if all four bytes formed a valid number
       if (endp != buf + CRC_LEN)
-        return res.fail(F("Incomplete or malformed checksum"), str);
+        return res.fail("Incomplete or malformed checksum", str);
 
       res.next = str + CRC_LEN;
       return res.succeed(check);
@@ -335,7 +330,7 @@ namespace dsmr
     {
       ParseResult<void> res;
       if (!n || str[0] != '/')
-        return res.fail(F("Data should start with /"), str);
+        return res.fail("Data should start with /", str);
 
       // Skip /
       const char *data_start = str + 1;
@@ -350,7 +345,7 @@ namespace dsmr
       }
 
       if (data_end >= str + n)
-        return res.fail(F("No checksum found"), data_end);
+        return res.fail("No checksum found", data_end);
 
       crc = _crc16_update(crc, *data_end); // Include the ! in CRC
 
@@ -361,7 +356,7 @@ namespace dsmr
       // Check CRC
       if (check_res.result != crc)
       {
-        return res.fail(F("Checksum mismatch"), data_end + 1);
+        return res.fail("Checksum mismatch", data_end + 1);
       }
 
       res = parse_data(data, data_start, data_end, unknown_error);
@@ -398,7 +393,7 @@ namespace dsmr
           // communication according to 62956-21), so we also allow
           // that.
           if (line_start + 3 >= line_end || (line_start[3] != '5' && line_start[3] != '3'))
-            return res.fail(F("Invalid identification string"), line_start);
+            return res.fail("Invalid identification string", line_start);
           // Offer it for processing using the all-ones Obis ID, which
           // is not otherwise valid.
           ParseResult<void> tmp = data->parse_line(ObisId(255, 255, 255, 255, 255, 255), line_start, line_end);
@@ -424,7 +419,7 @@ namespace dsmr
       }
 
       if (line_end != line_start)
-        return res.fail(F("Last dataline not CRLF terminated"), line_end);
+        return res.fail("Last dataline not CRLF terminated", line_end);
 
       return res;
     }
@@ -448,9 +443,9 @@ namespace dsmr
       // this field, that's ok. But if it did move, but not all the way
       // to the end, that's an error.
       if (datares.next != idres.next && datares.next != end)
-        return res.fail(F("Trailing characters on data line"), datares.next);
+        return res.fail("Trailing characters on data line", datares.next);
       else if (datares.next == idres.next && unknown_error)
-        return res.fail(F("Unknown field"), line);
+        return res.fail("Unknown field", line);
 
       return res.until(end);
     }

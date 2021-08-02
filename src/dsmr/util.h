@@ -30,12 +30,6 @@
 
 #pragma once
 
-#ifdef ARDUINO_ARCH_ESP8266
-#define DSMR_PROGMEM
-#else
-#define DSMR_PROGMEM PROGMEM
-#endif
-
 #include <Arduino.h>
 
 namespace dsmr
@@ -120,10 +114,10 @@ namespace dsmr
   struct ParseResult : public _ParseResult<ParseResult<T>, T>
   {
     const char *next = NULL;
-    const __FlashStringHelper *err = NULL;
+    const char *err = NULL;
     const char *ctx = NULL;
 
-    ParseResult &fail(const __FlashStringHelper *err, const char *ctx = NULL)
+    ParseResult &fail(const char *err, const char *ctx = NULL)
     {
       this->err = err;
       this->ctx = ctx;
