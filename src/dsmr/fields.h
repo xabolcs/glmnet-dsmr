@@ -361,6 +361,7 @@ namespace dsmr
     /* _BE */
     DEFINE_FIELD(gas_delivered_be, TimestampedFixedValue, ObisId(0, GAS_MBUS_ID, 24, 2, 3), TimestampedFixedField,
                  units::m3, units::dm3);
+    DEFINE_FIELD(gas_delivered_text, String, ObisId(0, GAS_MBUS_ID, 24, 3, 0), RawField);
 
     /* Device-Type */
     DEFINE_FIELD(thermal_device_type, uint16_t, ObisId(0, THERMAL_MBUS_ID, 24, 1, 0), IntField, units::none);

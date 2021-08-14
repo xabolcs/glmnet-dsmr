@@ -230,6 +230,9 @@ constexpr char gas_delivered::name[];
 constexpr ObisId gas_delivered_be::id;
 constexpr char gas_delivered_be::name[];
 
+constexpr ObisId gas_delivered_text::id;
+constexpr char gas_delivered_text::name[];
+
 constexpr ObisId thermal_device_type::id;
 constexpr char thermal_device_type::name[];
 
