@@ -326,7 +326,8 @@ namespace dsmr
    * pointer in the result will indicate the next unprocessed byte.
    */
     template <typename... Ts>
-    static ParseResult<void> parse(ParsedData<Ts...> *data, const char *str, size_t n, bool unknown_error = false)
+    static ParseResult<void> parse(ParsedData<Ts...> *data, const char *str, size_t n, bool unknown_error = false,
+                                   bool check_crc = true)
     {
       ParseResult<void> res;
       if (!n || str[0] != '/')
@@ -337,30 +338,42 @@ namespace dsmr
 
       // Look for ! that terminates the data
       const char *data_end = data_start;
-      uint16_t crc = _crc16_update(0, *str); // Include the / in CRC
-      while (data_end < str + n && *data_end != '!')
+      if (check_crc)
       {
-        crc = _crc16_update(crc, *data_end);
-        ++data_end;
+        uint16_t crc = _crc16_update(0, *str); // Include the / in CRC
+        while (data_end < str + n && *data_end != '!')
+        {
+          crc = _crc16_update(crc, *data_end);
+          ++data_end;
+        }
+        if (data_end >= str + n)
+          return res.fail("No checksum found", data_end);
+
+        crc = _crc16_update(crc, *data_end); // Include the ! in CRC
+
+        ParseResult<uint16_t> check_res = CrcParser::parse(data_end + 1, str + n);
+        if (check_res.err)
+          return check_res;
+
+        // Check CRC
+        if (check_res.result != crc)
+        {
+          return res.fail("Checksum mismatch", data_end + 1);
+        }
+        res = parse_data(data, data_start, data_end, unknown_error);
+        res.next = check_res.next;
+      }
+      else
+      {
+        while (data_end < str + n && *data_end != '!')
+        {
+          ++data_end;
+        }
+
+        res = parse_data(data, data_start, data_end, unknown_error);
+        res.next = data_end;
       }
 
-      if (data_end >= str + n)
-        return res.fail("No checksum found", data_end);
-
-      crc = _crc16_update(crc, *data_end); // Include the ! in CRC
-
-      ParseResult<uint16_t> check_res = CrcParser::parse(data_end + 1, str + n);
-      if (check_res.err)
-        return check_res;
-
-      // Check CRC
-      if (check_res.result != crc)
-      {
-        return res.fail("Checksum mismatch", data_end + 1);
-      }
-
-      res = parse_data(data, data_start, data_end, unknown_error);
-      res.next = check_res.next;
       return res;
     }
 
