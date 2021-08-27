@@ -33,6 +33,19 @@
 #include "util.h"
 #include "parser.h"
 
+#ifndef DSMR_GAS_MBUS_ID
+#define DSMR_GAS_MBUS_ID 1
+#endif
+#ifndef DSMR_WATER_MBUS_ID
+#define DSMR_WATER_MBUS_ID 2
+#endif
+#ifndef DSMR_THERMAL_MBUS_ID
+#define DSMR_THERMAL_MBUS_ID 3
+#endif
+#ifndef DSMR_SUB_MBUS_ID
+#define DSMR_SUB_MBUS_ID 4
+#endif
+
 namespace dsmr
 {
 
@@ -188,10 +201,10 @@ namespace dsmr
       static constexpr char kvarh[] = "kvarh";
     };
 
-    const uint8_t GAS_MBUS_ID = 1;
-    const uint8_t WATER_MBUS_ID = 2;
-    const uint8_t THERMAL_MBUS_ID = 3;
-    const uint8_t SUB_MBUS_ID = 4;
+    const uint8_t GAS_MBUS_ID = DSMR_GAS_MBUS_ID;
+    const uint8_t WATER_MBUS_ID = DSMR_WATER_MBUS_ID;
+    const uint8_t THERMAL_MBUS_ID = DSMR_THERMAL_MBUS_ID;
+    const uint8_t SUB_MBUS_ID = DSMR_SUB_MBUS_ID;
 
 #define DEFINE_FIELD(fieldname, value_t, obis, field_t, field_args...) \
   struct fieldname : field_t<fieldname, ##field_args>                  \
