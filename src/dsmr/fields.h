@@ -110,10 +110,20 @@ namespace dsmr
   {
     ParseResult<void> parse(const char *str, const char *end)
     {
-      ParseResult<uint32_t> res = NumParser::parse(3, _unit, str, end);
-      if (!res.err)
-        static_cast<T *>(this)->val()._value = res.result;
-      return res;
+      // Check if the value is a float value, plus its expected unit type.
+      ParseResult<uint32_t> res_float = NumParser::parse(3, _unit, str, end);
+      if (!res_float.err) {
+        static_cast<T *>(this)->val()._value = res_float.result;
+        return res_float;
+      }
+      // If not, then check for an int value, plus its expected unit type.
+      // This accomodates for some smart meters that publish int values intead
+      // of floats. E.g. most meters might publish "1-0:1.8.0(000441.879*kWh)",
+      // but there are meters that use "1-0:1.8.0(000441879*Wh)" instead.
+      ParseResult<uint32_t> res_int = NumParser::parse(0, _int_unit, str, end);
+      if (!res_int.err)
+        static_cast<T *>(this)->val()._value = res_float.result;
+      return res_float;
     }
 
     static const char *unit() { return _unit; }
