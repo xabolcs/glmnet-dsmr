@@ -121,8 +121,11 @@ namespace dsmr
       // of floats. E.g. most meters might publish "1-0:1.8.0(000441.879*kWh)",
       // but there are meters that use "1-0:1.8.0(000441879*Wh)" instead.
       ParseResult<uint32_t> res_int = NumParser::parse(0, _int_unit, str, end);
-      if (!res_int.err)
-        static_cast<T *>(this)->val()._value = res_float.result;
+      if (!res_int.err) {
+        static_cast<T *>(this)->val()._value = res_int.result;
+        return res_int;
+      }
+      // If not, then return the initial error result for the float parsing step.
       return res_float;
     }
 
