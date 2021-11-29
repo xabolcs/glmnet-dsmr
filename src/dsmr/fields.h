@@ -102,7 +102,7 @@ namespace dsmr
   // digits. To prevent inefficient floating point operations, we store
   // them as a fixed-point number: an integer that stores the value in
   // thousands. For example, a value of 1.234 kWh is stored as 1234. This
-  // effectively means that the integer value is het value in Wh. To allow
+  // effectively means that the integer value is the value in Wh. To allow
   // automatic printing of these values, both the original unit and the
   // integer unit is passed as a template argument.
   template <typename T, const char *_unit, const char *_int_unit>
@@ -110,10 +110,23 @@ namespace dsmr
   {
     ParseResult<void> parse(const char *str, const char *end)
     {
-      ParseResult<uint32_t> res = NumParser::parse(3, _unit, str, end);
-      if (!res.err)
-        static_cast<T *>(this)->val()._value = res.result;
-      return res;
+      // Check if the value is a float value, plus its expected unit type.
+      ParseResult<uint32_t> res_float = NumParser::parse(3, _unit, str, end);
+      if (!res_float.err) {
+        static_cast<T *>(this)->val()._value = res_float.result;
+        return res_float;
+      }
+      // If not, then check for an int value, plus its expected unit type.
+      // This accomodates for some smart meters that publish int values instead
+      // of floats. E.g. most meters would publish "1-0:1.8.0(000441.879*kWh)",
+      // but some use "1-0:1.8.0(000441879*Wh)" instead.
+      ParseResult<uint32_t> res_int = NumParser::parse(0, _int_unit, str, end);
+      if (!res_int.err) {
+        static_cast<T *>(this)->val()._value = res_int.result;
+        return res_int;
+      }
+      // If not, then return the initial error result for the float parsing step.
+      return res_float;
     }
 
     static const char *unit() { return _unit; }
