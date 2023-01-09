@@ -268,3 +268,12 @@ constexpr char sub_valve_position::name[];
 
 constexpr ObisId sub_delivered::id;
 constexpr char sub_delivered::name[];
+
+constexpr ObisId quart_hourly_current_average_peak_consumption::id;
+constexpr char quart_hourly_current_average_peak_consumption::name[];
+
+constexpr ObisId quart_hourly_max_peak_this_month::id;
+constexpr char quart_hourly_max_peak_this_month::name[];
+
+constexpr ObisId quart_hourly_average_peak_last_13months::id;
+constexpr char quart_hourly_average_peak_last_13months::name[];
