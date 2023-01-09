@@ -430,6 +430,16 @@ namespace dsmr
  * E meter) (Note: 4.x spec has "hourly meter reading") */
     DEFINE_FIELD(sub_delivered, TimestampedFixedValue, ObisId(0, SUB_MBUS_ID, 24, 2, 1), TimestampedFixedField,
                  units::m3, units::dm3);
+    /*
+    * Extra fields used for Belgian capacity rate/peak consumption (cappaciteitstarief)
+    */
+    /*Current rolling avg of the last 15 minutes*/
+    DEFINE_FIELD(quart_hourly_current_average_peak_consumption, FixedValue, ObisId(1, 0, 1, 4, 0), FixedField, units::kW, units::W);
+    /*Current rolling avg of the last 15 minutes*/
+    DEFINE_FIELD(quart_hourly_max_peak_this_month, FixedValue, ObisId(1, 0, 1, 6, 0), FixedField, units::kW, units::W);
+    /*Current Monthly max consumption*/
+    DEFINE_FIELD(quart_hourly_peak_consumption_last_13months, FixedValue, ObisId(0, 0, 98, 1, 0), FixedField, units::kW, units::W);
+
 
   } // namespace fields
 
