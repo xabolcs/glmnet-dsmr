@@ -434,12 +434,9 @@ namespace dsmr
     * Extra fields used for Belgian capacity rate/peak consumption (cappaciteitstarief)
     */
     /*Current rolling avg of the last 15 minutes*/
-    DEFINE_FIELD(quart_hourly_current_average_peak_consumption, FixedValue, ObisId(1, 0, 1, 4, 0), FixedField, units::kW, units::W);
+    DEFINE_FIELD(active_energy_import_current_average_demand, FixedValue, ObisId(1, 0, 1, 4, 0), FixedField, units::kW, units::W);
     /*Current rolling avg of the last 15 minutes*/
-    DEFINE_FIELD(quart_hourly_max_peak_this_month, FixedValue, ObisId(1, 0, 1, 6, 0), FixedField, units::kW, units::W);
-    /*Current Monthly max consumption*/
-    DEFINE_FIELD(quart_hourly_peak_consumption_last_13months, FixedValue, ObisId(0, 0, 98, 1, 0), FixedField, units::kW, units::W);
-
+    DEFINE_FIELD(active_energy_import_maximum_demand_running_month, FixedValue, ObisId(1, 0, 1, 6, 0), FixedField, units::kW, units::W);
 
   } // namespace fields
 
