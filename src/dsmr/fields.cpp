@@ -268,3 +268,9 @@ constexpr char sub_valve_position::name[];
 
 constexpr ObisId sub_delivered::id;
 constexpr char sub_delivered::name[];
+
+constexpr ObisId active_energy_import_current_average_demand::id;
+constexpr char active_energy_import_current_average_demand::name[];
+
+constexpr ObisId active_energy_import_maximum_demand_running_month::id;
+constexpr char active_energy_import_maximum_demand_running_month::name[];

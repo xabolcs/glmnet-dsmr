@@ -431,6 +431,12 @@ namespace dsmr
     DEFINE_FIELD(sub_delivered, TimestampedFixedValue, ObisId(0, SUB_MBUS_ID, 24, 2, 1), TimestampedFixedField,
                  units::m3, units::dm3);
 
+    /* Extra fields used for Belgian capacity rate/peak consumption (cappaciteitstarief) */
+    /*Current quart-hourly energy consumption*/
+    DEFINE_FIELD(active_energy_import_current_average_demand, FixedValue, ObisId(1, 0, 1, 4, 0), FixedField, units::kW, units::W);
+    /*Maximum energy consumption from the current month*/
+    DEFINE_FIELD(active_energy_import_maximum_demand_running_month, TimestampedFixedValue, ObisId(1, 0, 1, 6, 0), TimestampedFixedField, units::kW, units::W);
+
   } // namespace fields
 
 } // namespace dsmr
