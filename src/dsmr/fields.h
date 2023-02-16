@@ -157,12 +157,6 @@ namespace dsmr
     }
   };
 
-  struct DoubleTimestampedFixedValue : public FixedValue
-  {
-    String timestamp1;
-    String timestamp2;
-  };
-
   // Take the last value of multiple values
   // e.g. 0-0:98.1.0(1)(1-0:1.6.0)(1-0:1.6.0)(230201000000W)(230117224500W)(04.329*kW)
   template <typename T, const char *_unit, const char *_int_unit>
