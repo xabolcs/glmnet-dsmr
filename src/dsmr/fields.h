@@ -157,6 +157,38 @@ namespace dsmr
     }
   };
 
+  struct DoubleTimestampedFixedValue : public FixedValue
+  {
+    String timestamp1;
+    String timestamp2;
+  };
+
+  // Some numerical values are prefixed with a 2 timestamps. This is simply
+  // both of them concatenated, e.g. 1-0:1.6.0(230201000000W)(230117224500W)(04.329*kW)
+  template <typename T, const char *_unit, const char *_int_unit>
+  struct DoubleTimestampedFixedField : public FixedField<T, _unit, _int_unit>
+  {
+    ParseResult<void> parse(const char *str, const char *end)
+    {
+      // First, parse first timestamp
+      ParseResult<String> res = StringParser::parse_string(13, 13, str, end);
+      if (res.err)
+        return res;
+
+      static_cast<T *>(this)->val().timestamp1 = res.result;
+     
+      // First, parse second timestamp
+      ParseResult<String> res = StringParser::parse_string(13, 13, str, end);
+      if (res.err)
+        return res;
+
+      static_cast<T *>(this)->val().timestamp2 = res.result;
+
+      // Which is immediately followed by the numerical value
+      return FixedField<T, _unit, _int_unit>::parse(res.next, end);
+    }
+  };
+
   // A integer number is just represented as an integer.
   template <typename T, const char *_unit>
   struct IntField : ParsedField<T>
@@ -437,7 +469,7 @@ namespace dsmr
     /*Maximum energy consumption from the current month*/
     DEFINE_FIELD(active_energy_import_maximum_demand_running_month, TimestampedFixedValue, ObisId(1, 0, 1, 6, 0), TimestampedFixedField, units::kW, units::W);
     /*Maximum energy consumption from the last 13 months*/
-    DEFINE_FIELD(active_energy_import_maximum_demand_last_13_months, String, ObisId(0, 0, 98, 1, 0), RawField);
+    DEFINE_FIELD(active_energy_import_maximum_demand_last_13_months, DoubleTimestampedFixedValue, ObisId(0, 0, 98, 1, 0), DoubleTimestampedFixedField);
 
   } // namespace fields
 
