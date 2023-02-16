@@ -469,7 +469,7 @@ namespace dsmr
     /*Maximum energy consumption from the current month*/
     DEFINE_FIELD(active_energy_import_maximum_demand_running_month, TimestampedFixedValue, ObisId(1, 0, 1, 6, 0), TimestampedFixedField, units::kW, units::W);
     /*Maximum energy consumption from the last 13 months*/
-    DEFINE_FIELD(active_energy_import_maximum_demand_last_13_months, DoubleTimestampedFixedValue, ObisId(0, 0, 98, 1, 0), DoubleTimestampedFixedField);
+    DEFINE_FIELD(active_energy_import_maximum_demand_last_13_months, DoubleTimestampedFixedValue, ObisId(0, 0, 98, 1, 0), DoubleTimestampedFixedField, units::kW, units::W);
 
   } // namespace fields
 
