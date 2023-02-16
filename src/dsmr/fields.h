@@ -171,21 +171,21 @@ namespace dsmr
     ParseResult<void> parse(const char *str, const char *end)
     {
       // First, parse first timestamp
-      ParseResult<String> res1 = StringParser::parse_string(13, 13, str, end);
-      if (res1.err)
-        return res1;
+      ParseResult<String> res = StringParser::parse_string(13, 13, str, end);
+      if (res.err)
+        return res;
 
-      static_cast<T *>(this)->val().timestamp1 = res1.result;
+      static_cast<T *>(this)->val().timestamp1 = res.result;
      
-      // First, parse second timestamp
-      ParseResult<String> res2 = StringParser::parse_string(13, 13, res1.next, end);
-      if (res2.err)
-        return res2;
+      // Which is immediately followed by a second timestamp
+      res = StringParser::parse_string(13, 13, res.next, end);
+      if (res.err)
+        return res;
 
-      static_cast<T *>(this)->val().timestamp2 = res2.result;
+      static_cast<T *>(this)->val().timestamp2 = res.result;
 
-      // Which is immediately followed by the numerical value
-      return FixedField<T, _unit, _int_unit>::parse(res2.next, end);
+      // Which is followed by the numerical value
+      return FixedField<T, _unit, _int_unit>::parse(res.next, end);
     }
   };
 
