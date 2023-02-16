@@ -163,44 +163,29 @@ namespace dsmr
     String timestamp2;
   };
 
-  // Some numerical values are prefixed with a 2 timestamps. This is simply
-  // both of them concatenated, e.g. 0-0:98.1.0(1)(1-0:1.6.0)(1-0:1.6.0)(230201000000W)(230117224500W)(04.329*kW)
+  // Take the last value of multiple values
+  // e.g. 0-0:98.1.0(1)(1-0:1.6.0)(1-0:1.6.0)(230201000000W)(230117224500W)(04.329*kW)
   template <typename T, const char *_unit, const char *_int_unit>
-  struct DoubleTimestampedFixedField : public FixedField<T, _unit, _int_unit>
+  struct LastFixedField : public FixedField<T, _unit, _int_unit>
   {
     ParseResult<void> parse(const char *str, const char *end)
     {
-      // (1)
-      ParseResult<String> res = StringParser::parse_string(1, 20, str, end);
-      if (res.err)
-        return res;
-        
-      //(1-0:1.6.0)
-      res = StringParser::parse_string(1, 20, res.next, end);
-      if (res.err)
-        return res;
+      // we parse last entry 2 times
+      const char *last = end;
 
-      //(1-0:1.6.0)
-      res = StringParser::parse_string(1, 20, res.next, end);
-      if (res.err)
-        return res;
+      ParseResult<String> res;
+      res.next = str;
 
-      // (230201000000W) first timestamp
-      res = StringParser::parse_string(13, 13, res.next, end);
-      if (res.err)
-        return res;
-
-      static_cast<T *>(this)->val().timestamp1 = res.result;
-     
-      // (230117224500W) second timestamp
-      res = StringParser::parse_string(13, 13, res.next, end);
-      if (res.err)
-        return res;
-
-      static_cast<T *>(this)->val().timestamp2 = res.result;
+      while (res.next != end)
+      {
+        last = res.next;
+        res = StringParser::parse_string(1, 20, res.next, end);
+        if (res.err)
+          return res;
+      } 
 
       // (04.329*kW) Which is followed by the numerical value
-      return FixedField<T, _unit, _int_unit>::parse(res.next, end);
+      return FixedField<T, _unit, _int_unit>::parse(last, end);
     }
   };
 
@@ -484,7 +469,7 @@ namespace dsmr
     /*Maximum energy consumption from the current month*/
     DEFINE_FIELD(active_energy_import_maximum_demand_running_month, TimestampedFixedValue, ObisId(1, 0, 1, 6, 0), TimestampedFixedField, units::kW, units::W);
     /*Maximum energy consumption from the last 13 months*/
-    DEFINE_FIELD(active_energy_import_maximum_demand_last_13_months, DoubleTimestampedFixedValue, ObisId(0, 0, 98, 1, 0), DoubleTimestampedFixedField, units::kW, units::W);
+    DEFINE_FIELD(active_energy_import_maximum_demand_last_13_months, FixedValue, ObisId(0, 0, 98, 1, 0), LastFixedField, units::kW, units::W);
 
   } // namespace fields
 
