@@ -164,27 +164,42 @@ namespace dsmr
   };
 
   // Some numerical values are prefixed with a 2 timestamps. This is simply
-  // both of them concatenated, e.g. 1-0:1.6.0(230201000000W)(230117224500W)(04.329*kW)
+  // both of them concatenated, e.g. 0-0:98.1.0(1)(1-0:1.6.0)(1-0:1.6.0)(230201000000W)(230117224500W)(04.329*kW)
   template <typename T, const char *_unit, const char *_int_unit>
   struct DoubleTimestampedFixedField : public FixedField<T, _unit, _int_unit>
   {
     ParseResult<void> parse(const char *str, const char *end)
     {
-      // First, parse first timestamp
-      ParseResult<String> res = StringParser::parse_string(13, 13, str, end);
+      // (1)
+      ParseResult<String> res = StringParser::parse_string(1, 20, str, end);
+      if (res.err)
+        return res;
+        
+      //(1-0:1.6.0)
+      res = StringParser::parse_string(1, 20, res.next, end);
+      if (res.err)
+        return res;
+
+      //(1-0:1.6.0)
+      res = StringParser::parse_string(1, 20, res.next, end);
+      if (res.err)
+        return res;
+
+      // (230201000000W) first timestamp
+      res = StringParser::parse_string(13, 13, res.next, end);
       if (res.err)
         return res;
 
       static_cast<T *>(this)->val().timestamp1 = res.result;
      
-      // Which is immediately followed by a second timestamp
+      // (230117224500W) second timestamp
       res = StringParser::parse_string(13, 13, res.next, end);
       if (res.err)
         return res;
 
       static_cast<T *>(this)->val().timestamp2 = res.result;
 
-      // Which is followed by the numerical value
+      // (04.329*kW) Which is followed by the numerical value
       return FixedField<T, _unit, _int_unit>::parse(res.next, end);
     }
   };
