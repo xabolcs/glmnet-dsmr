@@ -274,3 +274,6 @@ constexpr char active_energy_import_current_average_demand::name[];
 
 constexpr ObisId active_energy_import_maximum_demand_running_month::id;
 constexpr char active_energy_import_maximum_demand_running_month::name[];
+
+constexpr ObisId active_energy_import_maximum_demand_last_13_months::id;
+constexpr char active_energy_import_maximum_demand_last_13_months::name[];
