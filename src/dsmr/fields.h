@@ -277,8 +277,8 @@ namespace dsmr
     /* Equipment identifier */
     DEFINE_FIELD(equipment_id, String, ObisId(0, 0, 96, 1, 1), StringField, 0, 96);
 
-    /* Meter Reading electricity delivered to client (Special for Lux) in 0,001 kWh */
-    /* TODO: by OBIS 1-0:1.8.0.255 IEC 62056 it should be Positive active energy (A+) total [kWh], should we rename it? */
+    /* Meter Reading electricity delivered to client in 0,001 kWh */
+    DEFINE_FIELD(energy_delivered, FixedValue, ObisId(1, 0, 1, 8, 0), FixedField, units::kWh, units::Wh);
     DEFINE_FIELD(energy_delivered_lux, FixedValue, ObisId(1, 0, 1, 8, 0), FixedField, units::kWh, units::Wh);
     /* Meter Reading electricity delivered to client (Tariff 1) in 0,001 kWh */
     DEFINE_FIELD(energy_delivered_tariff1, FixedValue, ObisId(1, 0, 1, 8, 1), FixedField, units::kWh, units::Wh);
@@ -288,8 +288,8 @@ namespace dsmr
     DEFINE_FIELD(energy_delivered_tariff3, FixedValue, ObisId(1, 0, 1, 8, 3), FixedField, units::kWh, units::Wh);
     /* Meter Reading electricity delivered to client (Tariff 4) in 0,001 kWh */
     DEFINE_FIELD(energy_delivered_tariff4, FixedValue, ObisId(1, 0, 1, 8, 4), FixedField, units::kWh, units::Wh);
-    /* Meter Reading electricity delivered by client (Special for Lux) in 0,001 kWh */
-    /* TODO: by OBIS 1-0:2.8.0.255 IEC 62056 it should be Negative active energy (A+) total [kWh], should we rename it? */
+    /* Meter Reading electricity delivered by client in 0,001 kWh */
+    DEFINE_FIELD(energy_returned, FixedValue, ObisId(1, 0, 2, 8, 0), FixedField, units::kWh, units::Wh);
     DEFINE_FIELD(energy_returned_lux, FixedValue, ObisId(1, 0, 2, 8, 0), FixedField, units::kWh, units::Wh);
     /* Meter Reading electricity delivered by client (Tariff 1) in 0,001 kWh */
     DEFINE_FIELD(energy_returned_tariff1, FixedValue, ObisId(1, 0, 2, 8, 1), FixedField, units::kWh, units::Wh);

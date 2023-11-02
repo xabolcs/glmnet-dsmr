@@ -76,7 +76,11 @@ constexpr char timestamp::name[];
 constexpr ObisId equipment_id::id;
 constexpr char equipment_id::name[];
 
+constexpr ObisId energy_delivered::id;
+constexpr char energy_delivered::name[];
+
 /* extra for Lux */
+[[deprecated("Replaced by energy_delivered")]]
 constexpr ObisId energy_delivered_lux::id;
 constexpr char energy_delivered_lux::name[];
 
@@ -104,7 +108,11 @@ constexpr char reactive_energy_delivered_tariff3::name[];
 constexpr ObisId reactive_energy_delivered_tariff4::id;
 constexpr char reactive_energy_delivered_tariff4::name[];
 
+constexpr ObisId energy_returned::id;
+constexpr char energy_returned::name[];
+
 /* extra for Lux */
+[[deprecated("Replaced by energy_returned")]]
 constexpr ObisId energy_returned_lux::id;
 constexpr char energy_returned_lux::name[];
 
