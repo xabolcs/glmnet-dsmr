@@ -73,8 +73,16 @@ constexpr char p1_version_be::name[];
 constexpr ObisId timestamp::id;
 constexpr char timestamp::name[];
 
+/* extra field for Hungary */
+constexpr ObisId cosem_logical_device_name_hun::id;
+constexpr char cosem_logical_device_name_hun::name[];
+
 constexpr ObisId equipment_id::id;
 constexpr char equipment_id::name[];
+
+/* Extra field for Hungary */
+constexpr ObisId equipment_id_hun::id;
+constexpr char equipment_id_hun::name[];
 
 constexpr ObisId energy_delivered::id;
 constexpr char energy_delivered::name[];
@@ -170,6 +178,10 @@ constexpr char electricity_threshold::name[];
 
 constexpr ObisId electricity_switch_position::id;
 constexpr char electricity_switch_position::name[];
+
+/* Extra field for Hungary */
+constexpr ObisId breaker_status_hun::id;
+constexpr char breaker_status_hun::name[];
 
 constexpr ObisId electricity_failures::id;
 constexpr char electricity_failures::name[];
@@ -363,6 +375,16 @@ constexpr char reactive_power_returned_l2::name[];
 constexpr ObisId reactive_power_returned_l3::id;
 constexpr char reactive_power_returned_l3::name[];
 
+/* HUN */
+constexpr ObisId power_factor_hun::id;
+constexpr char power_factor_hun::name[];
+constexpr ObisId power_factor_l1_hun::id;
+constexpr char power_factor_l1_hun::name[];
+constexpr ObisId power_factor_l2_hun::id;
+constexpr char power_factor_l2_hun::name[];
+constexpr ObisId power_factor_l3_hun::id;
+constexpr char power_factor_l3_hun::name[];
+
 constexpr ObisId gas_device_type::id;
 constexpr char gas_device_type::name[];
 
@@ -466,3 +488,6 @@ constexpr char fw_module_version::name[];
 
 constexpr ObisId fw_module_checksum::id;
 constexpr char fw_module_checksum::name[];
+
+constexpr ObisId end_of_month_data_raw_hun::id;
+constexpr char end_of_month_data_raw_hun::name[];

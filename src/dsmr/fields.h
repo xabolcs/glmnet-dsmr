@@ -274,8 +274,12 @@ namespace dsmr
     /* Date-time stamp of the P1 message */
     DEFINE_FIELD(timestamp, String, ObisId(0, 0, 1, 0, 0), TimestampField);
 
+    /* COSEM logical device name, specific to Hungarian operators: 0-0:42.0.0(AUX1020301234567) */
+    DEFINE_FIELD(cosem_logical_device_name_hun, String, ObisId(0, 0, 42, 0, 0), StringField, 0, 96);
+
     /* Equipment identifier */
     DEFINE_FIELD(equipment_id, String, ObisId(0, 0, 96, 1, 1), StringField, 0, 96);
+    DEFINE_FIELD(equipment_id_hun, String, ObisId(0, 0, 96, 1, 0), StringField, 0, 96);
 
     /* Meter Reading electricity delivered to client in 0,001 kWh */
     DEFINE_FIELD(energy_delivered, FixedValue, ObisId(1, 0, 1, 8, 0), FixedField, units::kWh, units::Wh);
@@ -288,6 +292,7 @@ namespace dsmr
     DEFINE_FIELD(energy_delivered_tariff3, FixedValue, ObisId(1, 0, 1, 8, 3), FixedField, units::kWh, units::Wh);
     /* Meter Reading electricity delivered to client (Tariff 4) in 0,001 kWh */
     DEFINE_FIELD(energy_delivered_tariff4, FixedValue, ObisId(1, 0, 1, 8, 4), FixedField, units::kWh, units::Wh);
+
     /* Meter Reading electricity delivered by client in 0,001 kWh */
     DEFINE_FIELD(energy_returned, FixedValue, ObisId(1, 0, 2, 8, 0), FixedField, units::kWh, units::Wh);
     DEFINE_FIELD(energy_returned_lux, FixedValue, ObisId(1, 0, 2, 8, 0), FixedField, units::kWh, units::Wh);
@@ -322,6 +327,12 @@ namespace dsmr
     /* Meter Reading Reactive energy delivered by client (Tariff 4) in 0,001 kvarh */
     DEFINE_FIELD(reactive_energy_returned_tariff4, FixedValue, ObisId(1, 0, 4, 8, 4), FixedField, units::kvarh, units::kvarh);
 
+    /* Extra fields used in Hungary - Reactive energy QI, QII, QIII, QIV */
+    DEFINE_FIELD(reactive_energy_qi_hun, FixedValue, ObisId(1, 0, 5, 8, 0), FixedField, units::kvarh, units::kvarh);
+    DEFINE_FIELD(reactive_energy_qii_hun, FixedValue, ObisId(1, 0, 6, 8, 0), FixedField, units::kvarh, units::kvarh);
+    DEFINE_FIELD(reactive_energy_qiii_hun, FixedValue, ObisId(1, 0, 7, 8, 0), FixedField, units::kvarh, units::kvarh);
+    DEFINE_FIELD(reactive_energy_qiv_hun, FixedValue, ObisId(1, 0, 8, 8, 0), FixedField, units::kvarh, units::kvarh);
+
     /* Tariff indicator electricity. The tariff indicator can also be used
  * to switch tariff dependent loads e.g boilers. This is the
  * responsibility of the P1 user */
@@ -338,11 +349,21 @@ namespace dsmr
     DEFINE_FIELD(reactive_power_delivered, FixedValue, ObisId(1, 0, 3, 7, 0), FixedField, units::kvar, units::kvar);
     DEFINE_FIELD(reactive_power_returned, FixedValue, ObisId(1, 0, 4, 7, 0), FixedField, units::kvar, units::kvar);
 
+    /* Extra fields used in Hungary - Instantaneous reactive power QI, QII, QIII, QIV */
+    DEFINE_FIELD(reactive_power_qi_hun, FixedValue, ObisId(1, 0, 5, 7, 0), FixedField, units::kvar, units::kvar);
+    DEFINE_FIELD(reactive_power_qii_hun, FixedValue, ObisId(1, 0, 6, 7, 0), FixedField, units::kvar, units::kvar);
+    DEFINE_FIELD(reactive_power_qiii_hun, FixedValue, ObisId(1, 0, 7, 7, 0), FixedField, units::kvar, units::kvar);
+    DEFINE_FIELD(reactive_power_qiv_hun, FixedValue, ObisId(1, 0, 8, 7, 0), FixedField, units::kvar, units::kvar);
+
     /* The actual threshold Electricity in kW. Removed in 4.0.7 / 4.2.2 / 5.0 */
     DEFINE_FIELD(electricity_threshold, FixedValue, ObisId(0, 0, 17, 0, 0), FixedField, units::kW, units::W);
 
     /* Switch position Electricity (in/out/enabled). Removed in 4.0.7 / 4.2.2 / 5.0 */
     DEFINE_FIELD(electricity_switch_position, uint8_t, ObisId(0, 0, 96, 3, 10), IntField, units::none);
+
+    /* Circuit breaker status (on/off), successor of OBIS code 0-0:90.3.10 for Hungarian meters */
+    DEFINE_FIELD(electricity_switch_position_hun, uint8_t, ObisId(0, 0, 96, 50, 68), IntField, units::none);
+    DEFINE_FIELD(breaker_status_hun, String, ObisId(0, 0, 96, 50, 68), StringField, 2, 3);
 
     /* Number of power failures in any phase */
     DEFINE_FIELD(electricity_failures, uint32_t, ObisId(0, 0, 96, 7, 21), IntField, units::none);
@@ -413,6 +434,9 @@ namespace dsmr
     DEFINE_FIELD(frequency_hz, FixedValue, ObisId(1, 0, 14, 7, 0), FixedField, units::Hz, units::Hz);
     /* Absolute active instantaneous power (|A|) [kW] */
     DEFINE_FIELD(abs_power, FixedValue, ObisId(1, 0, 15, 7, 0), FixedField, units::kW, units::W);
+
+    /* Absolute active energy for Hungary (|+A| + |-A|) [kWh] */
+    DEFINE_FIELD(abs_energy_total_hun, FixedValue, ObisId(1, 0, 15, 8, 0), FixedField, units::kWh, units::Wh);
 
     /* Instantaneous current L1 in A resolution */
     DEFINE_FIELD(current_l1, FixedValue, ObisId(1, 0, 31, 7, 0), FixedField, units::A, units::mA);
@@ -492,6 +516,12 @@ namespace dsmr
     // DEFINE_FIELD(active_demand_net, int32_t, ObisId(1, 0, 16, 24, 0), IntField, units::kW);  
     /* Active Demand Avg3 Absolute  in W resolution */
     DEFINE_FIELD(active_demand_abs, FixedValue, ObisId(1, 0, 15, 24, 0), FixedField, units::kW, units::W);
+
+    /* Power factor for Hungary */
+    DEFINE_FIELD(power_factor_hun, FixedValue, ObisId(1, 0, 13, 7, 0), FixedField, units::none, units::none);
+    DEFINE_FIELD(power_factor_l1_hun, FixedValue, ObisId(1, 0, 33, 7, 0), FixedField, units::none, units::none);
+    DEFINE_FIELD(power_factor_l2_hun, FixedValue, ObisId(1, 0, 53, 7, 0), FixedField, units::none, units::none);
+    DEFINE_FIELD(power_factor_l3_hun, FixedValue, ObisId(1, 0, 73, 7, 0), FixedField, units::none, units::none);
 
     /* Device-Type */
     DEFINE_FIELD(gas_device_type, uint16_t, ObisId(0, GAS_MBUS_ID, 24, 1, 0), IntField, units::none);
@@ -582,7 +612,15 @@ namespace dsmr
     /* Image Module Version and checksum */
     DEFINE_FIELD(fw_module_version, FixedValue, ObisId(1, 1, 0, 2, 0), FixedField, units::none, units::none);
     DEFINE_FIELD(fw_module_checksum, String, ObisId(1, 1, 0, 2, 8), StringField, 0, 8);
-      
+
+    /* End-of-month data (last month) for Hungary, just read it as raw for now */
+    /* alternative 1: 0-0:98.1.0(timestamp)(value 1)(value 2)...(value n)
+
+    There is an alternative 2 too: 0-0:98.1.0\r\n(\r\nObis Code 0(timestamp)\r\nObis Code 1(value 1)\r\nObis Code 2(value 2)\r\n...Obis Code n(value n)\r\n)
+    Note the new lines, the Obis codes and the extra parenthesis!
+    */
+    DEFINE_FIELD(end_of_month_data_raw_hun, String, ObisId(0, 0, 98, 1, 0), RawField);
+
   } // namespace fields
 
 } // namespace dsmr
