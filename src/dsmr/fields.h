@@ -407,8 +407,10 @@ namespace dsmr
 
     /* Instantaneous voltage (U) [V] */
     DEFINE_FIELD(voltage, FixedValue, ObisId(1, 0, 12, 7, 0), FixedField, units::V, units::mV);
-    /* Frequency [Hz] */
+    /* Frequency [kHz] */
     DEFINE_FIELD(frequency, FixedValue, ObisId(1, 0, 14, 7, 0), FixedField, units::kHz, units::Hz);
+    /* Frequency [Hz] */
+    DEFINE_FIELD(frequency_hz, FixedValue, ObisId(1, 0, 14, 7, 0), FixedField, units::Hz, units::Hz);
     /* Absolute active instantaneous power (|A|) [kW] */
     DEFINE_FIELD(abs_power, FixedValue, ObisId(1, 0, 15, 7, 0), FixedField, units::kW, units::W);
 
